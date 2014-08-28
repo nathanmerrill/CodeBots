@@ -1,0 +1,20 @@
+If #A=#A+2 #C #C+1  \\can create infinite loop
+Copy #A #1+A        \\commutative addition?
+Block #A+1
+Flag
+Flag
+Flag
+Block C
+Block *D \\block opponent's variable
+If ***C+**C==C+*C #1+C #C+C \\C+C would execute Block C, which should have no effect
+Copy **D ***D
+Copy *****D *****D
+Block *D
+Copy #C+2 *#*C
+Block #23+20
+Copy #C #C+1
+Copy #1+2+3+2 *#*10+10+C+3  \\addition!
+Move
+Block **B   \\could this one line block B a second time if called by an If?
+If E #C+23 #C+14 \\chaining Ifs
+\\ Empty line

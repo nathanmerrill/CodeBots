@@ -1,0 +1,7 @@
+Copy 2 C
+Move
+Copy #15 *#A
+If D #2 #1
+Copy A+1 A
+Copy E D
+Copy 2 C

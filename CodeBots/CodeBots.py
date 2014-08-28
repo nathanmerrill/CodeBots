@@ -1,0 +1,371 @@
+import os
+import random
+
+bots = {}
+num_lines = 24
+num_copies = 50
+num_repeats = 50000
+width = 0
+height = 0
+
+directions = North, East, South, West = ((0, -1), (1, 0), (0, 1), (-1, 0))
+
+recursives = set()
+
+class BlockedException(BaseException):
+    pass
+
+class BadFormatException(BaseException):
+    pass
+
+class Action(object):
+    def __init__(self, name, args=(), func=lambda: None):
+        self.name = name
+        self.args = args
+        self.func = func
+        self.hash = hash(args)
+
+    def equals(self, other):
+        return self.name == other.name
+
+    def __eq__(self, other):
+        return self.equals(other) and self.args == other.args
+
+    def __call__(self, *args, **kwargs):
+        if self.hash in recursives:
+            return
+        recursives.add(self.hash)
+        return self.func(*args, **kwargs)
+
+ArgumentTypes = Int, Var, Line = range(3)
+
+class Argument(object):
+    def __init__(self, string):
+        self.num_line_opponents = 0
+        self.type = Var
+        self.string = string
+        if "+" in string:
+            self.type = Int
+        if "#" in string:
+            self.type = Line
+            parts = string.split("#")
+            if len(parts) > 2:
+                raise BadFormatException
+            self.num_line_opponents = len(parts[0])
+            string = parts[1]
+        self.parts_to_add = []
+        for part in string.split("+"):
+            num_opponents = part.count("*")
+            if not part.startswith("*"*num_opponents):
+                raise BadFormatException
+            part = part[num_opponents:]
+            try:
+                self.parts_to_add.append((int(part), 0))
+                if self.type == Var:
+                    self.type = Int
+                continue
+            except ValueError:
+                pass
+            if part < "A" or part > "E":
+                raise BadFormatException
+            self.parts_to_add.append((part, num_opponents))
+        self.var_name = self.parts_to_add[0][0] \
+            if len(self.parts_to_add) is 1 else None
+        if not len(self.parts_to_add):
+            raise BadFormatException
+
+
+    def __hash__(self):
+        return hash(self.string)
+
+    def step_opponents(self, person, num_opponents):
+        for _ in xrange(num_opponents):
+            person = person.get_opponent()
+            if not person:
+                return None
+        return person
+
+    def get_value(self, person):
+        return_person = person
+        if len(self.parts_to_add) == 1:
+            return_person = self.step_opponents(person, self.parts_to_add[0][1])
+            if not return_person:
+                return None, None
+            return_val = self.parts_to_add[0][0]
+        else:
+            sum = 0
+            for part, opponents in self.parts_to_add:
+                return_person = self.step_opponents(person, opponents)
+                if not return_person:
+                    return None, None
+                sum += return_person.parse_number(part)
+            return_val = sum
+        if self.type is Line:
+            opponent = self.step_opponents(person, self.num_line_opponents)
+            return_val = return_person.parse_number(return_val)
+            return_person = opponent
+        return return_person, return_val
+
+
+class Bot(object):
+    def __init__(self, name, coordinates, code):
+        self.name = name
+        self.vars = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0}
+        self.coordinates = coordinates
+        self.blocked = {}
+        self.actions = self.read_code(code)
+
+    def read_code(self, code):
+        actions = []
+        for line in code.splitlines():
+            if r"\\" in line:
+                line = line[:line.index(r"\\")]
+            line = line.strip()
+            if not line:
+                continue
+            words = line.split(" ")
+            try:
+                actions.append(getattr(self, words[0])(*words[1:]))
+            except BadFormatException:
+                print "Error on Line "+str(len(actions)) + " in " +self.name
+                actions.append(Line)
+                raise
+        if len(actions) < num_lines:
+            print self.name+" has less than "+str(num_lines)+" lines."
+        return actions
+
+    def get_arg(self, argument):
+        person, val = argument.get_value(self)
+        if not person:
+            return None
+        if person is self:
+            rotator = 0
+        else:
+            rotator = hash(person.name)
+        if argument.type == Int:
+            return val % 16
+        if argument.type == Line:
+            return person.actions[val % 16]
+        return person.vars[argument.var_name]
+
+    def set_arg(self, argument, value):
+        value = self.get_arg(value)
+        if value is None:
+            return
+        person, val = argument.get_value(self)
+        if person is None:
+            return
+        person.check_blocked(argument.var_name)
+        if argument.type == Line:
+            person.actions[val % 16] = value
+        if argument.type == Var:
+            person.vars[val] = value
+
+    def check_blocked(self, val):
+        if val in self.blocked and self.blocked[val]:
+            self.blocked[val].pop()
+            raise BlockedException()
+
+    def parse_number(self, num):
+        if isinstance(num, int):
+            return num
+        return self.vars[num]
+
+    def get_direction(self):
+        direction = directions[self.vars["D"] % 4]
+        position = [d+c for d, c in zip(direction, self.coordinates)]
+        if position[0] < 0:
+            position[0] += width
+        elif position[0] >= width:
+            position[0] -= width
+        if position[1] < 0:
+            position[1] += height
+        elif position[1] >= height:
+            position[1] -= height
+        return tuple(position)
+
+    def get_opponent(self):
+        d = self.get_direction()
+        if d in bots:
+            return bots[d]
+        else:
+            return None
+
+    def Move(self):
+        global bots
+        def move():
+            new_coordinates = self.get_direction()
+            if new_coordinates not in bots:
+                del bots[self.coordinates]
+                bots[new_coordinates] = self
+                self.coordinates = new_coordinates
+        return Action(name="Move", func=move)
+
+    def Flag(self):
+        flag_type = self.name
+        return Action(name="Flag", args=(flag_type,))
+
+    def Copy(self, copy_from, copy_to):
+        copy_from = Argument(copy_from)
+        copy_to = Argument(copy_to)
+        if copy_to.type == Int:
+            raise BadFormatException
+        if (copy_to.type == Line or copy_from.type == Line) \
+                and copy_from.type != copy_to.type:
+            raise BadFormatException
+        return Action(name="Copy", args=(copy_to, copy_from),
+                      func=lambda: self.set_arg(copy_to, copy_from))
+
+    def Block(self, var_name):
+        var_name = Argument(var_name)
+        if var_name.type == Int:
+            raise BadFormatException
+        uniqifier = random.random()
+        def block():
+            person, var = var_name.get_value(self)
+            if not person:
+                return
+            if var not in person.blocked:
+                person.blocked[var] = set()
+            person.blocked[var].add(uniqifier)
+        return Action(name="Block", args=(var_name,), func=block)
+
+    def If(self, condition, line1, line2):
+        c = self.parse_condition(condition)
+        line1 = Argument(line1)
+        line2 = Argument(line2)
+        if line1.type != Line or line2.type != Line:
+            raise BadFormatException
+        return Action(name="If", args=(condition, line1, line2),
+                      func=lambda: self.get_arg(line1)() if c()
+                      else self.get_arg(line2)())
+
+    def parse_condition(self, condition):
+        if "==" in condition:
+            try:
+                val1, val2 = tuple(condition.split("=="))
+            except ValueError:
+                raise BadFormatException
+            val1 = Argument(val1)
+            val2 = Argument(val2)
+            if (val1.type == Line or val2.type == Line) \
+                    and val2.type != val1.type:
+                raise BadFormatException
+            return lambda: self.get_arg(val1) == self.get_arg(val2)
+        if "=" in condition:
+            try:
+                val1, val2 = tuple(condition.split("="))
+            except ValueError:
+                raise BadFormatException
+            val1 = Argument(val1)
+            val2 = Argument(val2)
+            if (val1.type == Line or val2.type == Line) \
+                    and val2.type != val1.type:
+                raise BadFormatException
+            def equals():
+                if val1.type == Line:
+                    return self.get_arg(val1).equals(self.get_arg(val2))
+                return val1 == val2
+            return equals
+        condition = Argument(condition)
+        if condition.type == Line:
+            def test_line():
+                person, arg = condition.get_value(self)
+                return person[arg].name == "Flag"
+            return test_line
+        if condition.type == Var:
+            if condition.var_name == "E":
+                def test_e():
+                    person, arg = condition.get_value(self)
+                    return bool(person.vars[arg] % 2)
+                return test_e
+            if condition.var_name == "D":
+                def test_d():
+                    person, arg = condition.get_value(self)
+                    return person.get_direction() in bots
+                return test_d
+            def test_all():
+                person, arg = condition.get_value(self)
+                return bool(person.vars[arg])
+            return test_all
+        return lambda: bool(condition.get_value(self)[1])
+
+    def act(self):
+        recursives.clear()
+        self.vars["E"] = random.randrange(num_lines)
+        try:
+            self.actions[self.vars["C"]]()
+        except BlockedException:
+            pass
+        self.vars["C"] += 1
+        if self.vars["C"] >= num_lines:
+            self.vars["C"] -= num_lines
+
+    def declare_flag(self):
+        flags = {}
+        for action in self.actions:
+            if action.name == "Flag":
+                flag = action.args[0]
+                if flag not in flags:
+                    flags[flag] = 1
+                else:
+                    flags[flag] += 1
+        max_flag_count = 0
+        max_flag = 0
+        for flag, amount in flags.items():
+            if amount > max_flag_count:
+                max_flag = flag
+                max_flag_count = amount
+            elif amount == max_flag_count:
+                max_flag = 0
+                max_flag_count = 0
+        return max_flag
+
+def read_bots():
+    b = [(read_file("bots/"+f), f.replace(".txt","")) for f in os.listdir("bots/")]*num_copies
+    random.shuffle(b)
+    global width
+    global height
+    width = int(len(b)**.5)
+    height = int(len(b)/width)+1
+    for x in xrange(width):
+        for y in xrange(height):
+            coordinates = (x*4+y%2+2, y)
+            code, name = b.pop()
+            bots[coordinates] = Bot(name, coordinates, code)
+            if not b:
+                return
+
+def read_file(filename):
+    f = file(filename)
+    s = f.read()
+    f.close()
+    return s
+
+
+if __name__ == "__main__":
+    read_bots()
+    import time
+    start_time = time.time()
+    for round in xrange(num_repeats):
+        bot = bots.values()[0]
+        if not round%100:
+            print round
+        for bot in bots.values():
+            bot.act()
+    finish_time = time.time()
+    running_time = (finish_time-start_time)
+    points = {}
+    for bot in bots.values():
+        flag = bot.declare_flag()
+        if flag in points:
+            points[flag] += 1
+        else:
+            points[flag] = 1
+    total_scores = sorted([x[::-1] for x in points.items()])[::-1]
+    for score, name in total_scores:
+        if name == 0:
+            print "There were "+str(score)+" bots with equal flags"
+        else:
+            print name+" had "+str(score)+" points"
+    print "Execution took "+str(running_time)+" seconds"
