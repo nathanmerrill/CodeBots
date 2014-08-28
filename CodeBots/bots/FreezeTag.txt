@@ -1,0 +1,24 @@
+Move
+If D #3 #2
+Copy 23 C
+Copy 3 C
+Copy #23 *#*C
+Copy #21 *#*C+1
+Copy #22 *#*C+2
+Copy #21 *#*C+3
+Copy #22 *#*C+4
+Copy #21 *#*C+5
+Copy #22 *#*C+6
+Copy #21 *#*C+7
+Copy #22 *#*C+8
+Copy #21 *#*C+9
+Copy #22 *#*C+10
+Copy #21 *#*C+11
+Copy #22 *#*C+12
+Copy #21 *#*C+13
+Copy #22 *#*C+14
+Copy D+1 D
+Copy 0 C
+Flag
+Flag
+Copy C+23 C

@@ -264,7 +264,13 @@ class Bot(object):
             if (val1.type == Line or val2.type == Line) \
                     and val2.type != val1.type:
                 raise BadFormatException
-            return lambda b: b.get_arg(val1) == b.get_arg(val2)
+            def is_equal(b):
+                v1 = b.get_arg(val1)
+                v2 = b.get_arg(val2)
+                if v1 is None or v2 is None:
+                    return False
+                return v1 == v2
+            return is_equal
         if "=" in condition:
             try:
                 val1, val2 = tuple(condition.split("="))
@@ -276,6 +282,10 @@ class Bot(object):
                     and val2.type != val1.type:
                 raise BadFormatException
             def equals(b):
+                v1 = b.get_arg(val1)
+                v2 = b.get_arg(val2)
+                if val1 is None or val2 is None:
+                    return False
                 if val1.type == Line:
                     return b.get_arg(val1).equals(b.get_arg(val2))
                 return val1 == val2
@@ -378,7 +388,7 @@ if __name__ == "__main__":
     total_scores = sorted([x[::-1] for x in points.items()])[::-1]
     for score, name in total_scores:
         if name == 0:
-            print "There were "+str(score)+" bots with equal flags"
+            print "> There were "+str(score)+" bots with equal flags\n"
         else:
-            print name+" had "+str(score)+" points"
+            print "> "+name+" had "+str(score)+" points\n"
     print "Execution took "+str(running_time)+" seconds"

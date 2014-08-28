@@ -1,0 +1,24 @@
+Move
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+If D #19 #0
+Copy D+1 D
+Copy 0 C
+If *#*C==#23 #20 #21
+Copy #22 *#E
+Copy #23 *#*C
+Flag
+Copy C+23 C
