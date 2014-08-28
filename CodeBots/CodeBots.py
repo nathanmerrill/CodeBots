@@ -6,7 +6,7 @@ import random
 num_lines = 24
 num_copies = 50
 num_turns = 5000
-num_games = 1
+num_games = 50
 width = 0
 height = 0
 total_offset = random.randrange(0, 16)
