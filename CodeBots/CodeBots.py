@@ -7,6 +7,7 @@ num_copies = 50
 num_repeats = 50000
 width = 0
 height = 0
+total_offset = random.randrange(0,16)
 
 directions = North, East, South, West = ((0, -1), (1, 0), (0, 1), (-1, 0))
 
@@ -19,7 +20,7 @@ class BadFormatException(BaseException):
     pass
 
 class Action(object):
-    def __init__(self, name, args=(), func=lambda: None):
+    def __init__(self, name, args=(), func=lambda b: None):
         self.name = name
         self.args = args
         self.func = func
@@ -110,10 +111,12 @@ class Argument(object):
 class Bot(object):
     def __init__(self, name, coordinates, code):
         self.name = name
-        self.vars = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0}
+        self.vars = {"A": 0, "B": 0, "C": 0,
+                     "D": random.randrange(16), "E": random.randrange(16)}
         self.coordinates = coordinates
         self.blocked = {}
         self.actions = self.read_code(code)
+        self.offset = int(hash(name))+total_offset
 
     def read_code(self, code):
         actions = []
@@ -124,29 +127,27 @@ class Bot(object):
             if not line:
                 continue
             words = line.split(" ")
+            method_holder = self if words[0] == "Flag" else Bot
             try:
-                actions.append(getattr(self, words[0])(*words[1:]))
+                actions.append(getattr(method_holder, words[0])(*words[1:]))
             except BadFormatException:
                 print "Error on Line "+str(len(actions)) + " in " +self.name
                 actions.append(Line)
                 raise
-        if len(actions) < num_lines:
-            print self.name+" has less than "+str(num_lines)+" lines."
+        while len(actions) < num_lines:
+            actions.append(self.Flag())
         return actions
 
     def get_arg(self, argument):
         person, val = argument.get_value(self)
         if not person:
             return None
-        if person is self:
-            rotator = 0
-        else:
-            rotator = hash(person.name)
+        offset = person.offset if person is not self else 0
         if argument.type == Int:
-            return val % 16
+            return (val+offset) % num_lines
         if argument.type == Line:
-            return person.actions[val % 16]
-        return person.vars[argument.var_name]
+            return person.actions[(val+offset) % num_lines]
+        return (person.vars[argument.var_name] + offset) % num_lines
 
     def set_arg(self, argument, value):
         value = self.get_arg(value)
@@ -172,7 +173,12 @@ class Bot(object):
         return self.vars[num]
 
     def get_direction(self):
-        direction = directions[self.vars["D"] % 4]
+        try:
+            direction = directions[self.vars["D"] % 4]
+        except:
+            import pdb
+            pdb.set_trace()
+            raise
         position = [d+c for d, c in zip(direction, self.coordinates)]
         if position[0] < 0:
             position[0] += width
@@ -191,21 +197,23 @@ class Bot(object):
         else:
             return None
 
-    def Move(self):
+    @classmethod
+    def Move(cls):
         global bots
-        def move():
-            new_coordinates = self.get_direction()
+        def move(b):
+            new_coordinates = b.get_direction()
             if new_coordinates not in bots:
-                del bots[self.coordinates]
-                bots[new_coordinates] = self
-                self.coordinates = new_coordinates
+                del bots[b.coordinates]
+                bots[new_coordinates] = b
+                b.coordinates = new_coordinates
         return Action(name="Move", func=move)
 
     def Flag(self):
         flag_type = self.name
         return Action(name="Flag", args=(flag_type,))
 
-    def Copy(self, copy_from, copy_to):
+    @classmethod
+    def Copy(cls, copy_from, copy_to):
         copy_from = Argument(copy_from)
         copy_to = Argument(copy_to)
         if copy_to.type == Int:
@@ -214,15 +222,16 @@ class Bot(object):
                 and copy_from.type != copy_to.type:
             raise BadFormatException
         return Action(name="Copy", args=(copy_to, copy_from),
-                      func=lambda: self.set_arg(copy_to, copy_from))
+                      func=lambda b: b.set_arg(copy_to, copy_from))
 
-    def Block(self, var_name):
+    @classmethod
+    def Block(cls, var_name):
         var_name = Argument(var_name)
         if var_name.type == Int:
             raise BadFormatException
         uniqifier = random.random()
-        def block():
-            person, var = var_name.get_value(self)
+        def block(b):
+            person, var = var_name.get_value(b)
             if not person:
                 return
             if var not in person.blocked:
@@ -230,17 +239,18 @@ class Bot(object):
             person.blocked[var].add(uniqifier)
         return Action(name="Block", args=(var_name,), func=block)
 
-    def If(self, condition, line1, line2):
-        c = self.parse_condition(condition)
+    @classmethod
+    def If(cls, condition, line1, line2):
+        c = cls.parse_condition(condition)
         line1 = Argument(line1)
         line2 = Argument(line2)
         if line1.type != Line or line2.type != Line:
             raise BadFormatException
         return Action(name="If", args=(condition, line1, line2),
-                      func=lambda: self.get_arg(line1)() if c()
-                      else self.get_arg(line2)())
-
-    def parse_condition(self, condition):
+                      func=lambda b: b.get_arg(line1)(b) if c(b)
+                      else b.get_arg(line2)(b))
+    @classmethod
+    def parse_condition(cls, condition):
         if "==" in condition:
             try:
                 val1, val2 = tuple(condition.split("=="))
@@ -251,7 +261,7 @@ class Bot(object):
             if (val1.type == Line or val2.type == Line) \
                     and val2.type != val1.type:
                 raise BadFormatException
-            return lambda: self.get_arg(val1) == self.get_arg(val2)
+            return lambda b: b.get_arg(val1) == b.get_arg(val2)
         if "=" in condition:
             try:
                 val1, val2 = tuple(condition.split("="))
@@ -262,39 +272,39 @@ class Bot(object):
             if (val1.type == Line or val2.type == Line) \
                     and val2.type != val1.type:
                 raise BadFormatException
-            def equals():
+            def equals(b):
                 if val1.type == Line:
-                    return self.get_arg(val1).equals(self.get_arg(val2))
+                    return b.get_arg(val1).equals(b.get_arg(val2))
                 return val1 == val2
             return equals
         condition = Argument(condition)
         if condition.type == Line:
-            def test_line():
-                person, arg = condition.get_value(self)
+            def test_line(b):
+                person, arg = condition.get_value(b)
                 return person[arg].name == "Flag"
             return test_line
         if condition.type == Var:
             if condition.var_name == "E":
-                def test_e():
-                    person, arg = condition.get_value(self)
+                def test_e(b):
+                    person, arg = condition.get_value(b)
                     return bool(person.vars[arg] % 2)
                 return test_e
             if condition.var_name == "D":
-                def test_d():
-                    person, arg = condition.get_value(self)
+                def test_d(b):
+                    person, arg = condition.get_value(b)
                     return person.get_direction() in bots
                 return test_d
-            def test_all():
-                person, arg = condition.get_value(self)
+            def test_all(b):
+                person, arg = condition.get_value(b)
                 return bool(person.vars[arg])
             return test_all
-        return lambda: bool(condition.get_value(self)[1])
+        return lambda b: bool(condition.get_value(b)[1])
 
     def act(self):
         recursives.clear()
         self.vars["E"] = random.randrange(num_lines)
         try:
-            self.actions[self.vars["C"]]()
+            self.actions[self.vars["C"]](self)
         except BlockedException:
             pass
         self.vars["C"] += 1

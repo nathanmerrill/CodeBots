@@ -1,0 +1,4 @@
+Move
+Copy #E *#*E
+Copy E D
+Copy 23 C

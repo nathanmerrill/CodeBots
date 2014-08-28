@@ -1,0 +1,5 @@
+If D #4 #3
+Move
+Copy 0 C
+Copy *#*C #1
+Copy #23 *#E
