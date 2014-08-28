@@ -5,6 +5,6 @@ If D #7 #0
 If D #7 #0
 If D #7 #0
 Copy D+1 D
-Copy 1 C
+Copy 0 C
 Copy #E *#E
 Flag

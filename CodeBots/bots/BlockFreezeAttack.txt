@@ -1,6 +1,6 @@
 Block #A
 Copy A+1 A
-If A #3 #4
+If A #3 #4      
 Copy 23 C
 Copy 5 C
 Move

@@ -121,8 +121,8 @@ class Bot(object):
     def read_code(self, code):
         actions = []
         for line in code.splitlines():
-            if r"\\" in line:
-                line = line[:line.index(r"\\")]
+            if r"//" in line:
+                line = line[:line.index(r"//")]
             line = line.strip()
             if not line:
                 continue
