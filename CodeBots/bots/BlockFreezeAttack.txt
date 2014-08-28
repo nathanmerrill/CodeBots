@@ -1,24 +1,24 @@
-Block #A
-Copy A+1 A
+Block #A        // start block loop
+Copy A+1 A      // loop A from 0 to 23
 If A #3 #4      
-Copy 23 C
-Copy 5 C
+Copy 23 C       // repeat block loop
+Copy 5 C        // exit block loop to attack/move loop
 Move
-If D #11 #5
-Copy A+1 A
+If D #11 #5     // attack or move
+Copy A+1 A      // loop A from 0 to 23
 If A #9 #10
-Copy 5 C
-Copy 23 C
-Copy 11 C
-Copy #23 *#*C
-Copy #19 *#E
-Copy #20 *#E
-Copy #21 *#E
-Copy #22 *#E
-Copy D+1 D
-Copy 5 C
+Copy 5 C        // repeat attack/move loop
+Copy 23 C       // exit attack/move loop to block loop
+Copy 11 C       // start of attack routine
+Copy #23 *#*C   // freeze opponent
+Copy #19 *#E    // copy flag to opponent
+Copy #20 *#E    // copy flag to opponent
+Copy #21 *#E    // copy flag to opponent
+Copy #22 *#E    // copy flag to opponent
+Copy D+1 D      // change direction
+Copy 5 C        // repeat attack/move loop
 Flag
 Flag
 Flag
 Flag
-Copy C+23 C
+Copy C+23 C     // freeze instruction, for copying

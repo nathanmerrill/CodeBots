@@ -1,0 +1,17 @@
+Block #13
+Block #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+If D #13 #14
+Copy 23 C
+If E #15 #16
+Move
+Copy #23 *#*C
+Copy D+1 D

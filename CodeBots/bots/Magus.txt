@@ -1,0 +1,11 @@
+Copy 24 A
+Copy 23 B
+If A #8 #4
+Block #A
+Copy #A *#A
+Copy A+B A
+Copy 2 C
+Copy 0 *C
+Flag
+Move
+Copy 0 C

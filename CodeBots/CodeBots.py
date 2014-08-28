@@ -1,13 +1,16 @@
+#!/usr/bin/env python
+
 import os
 import random
 
-bots = {}
 num_lines = 24
 num_copies = 50
-num_repeats = 50000
+num_turns = 5000
+num_games = 1
 width = 0
 height = 0
-total_offset = random.randrange(0,16)
+total_offset = random.randrange(0, 16)
+bots = {}
 
 directions = North, East, South, West = ((0, -1), (1, 0), (0, 1), (-1, 0))
 
@@ -367,24 +370,26 @@ def read_file(filename):
 
 
 if __name__ == "__main__":
-    read_bots()
     import time
     start_time = time.time()
-    for round in xrange(num_repeats):
-        bot = bots.values()[0]
-        if not round%100:
-            print round
+    points = {}
+    for game in xrange(num_games):
+        bots.clear()
+        print "Game:"+str(game)
+        read_bots()
+        for turn in xrange(num_turns):
+            bot = bots.values()[0]
+            for bot in bots.values():
+                bot.act()
         for bot in bots.values():
-            bot.act()
+            flag = bot.declare_flag()
+            if flag in points:
+                points[flag] += 1
+            else:
+                points[flag] = 1
     finish_time = time.time()
     running_time = (finish_time-start_time)
-    points = {}
-    for bot in bots.values():
-        flag = bot.declare_flag()
-        if flag in points:
-            points[flag] += 1
-        else:
-            points[flag] = 1
+
     total_scores = sorted([x[::-1] for x in points.items()])[::-1]
     for score, name in total_scores:
         if name == 0:

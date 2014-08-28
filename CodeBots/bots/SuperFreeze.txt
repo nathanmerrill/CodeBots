@@ -1,24 +1,24 @@
-Move
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-If D #19 #0
-Copy D+1 D
-Copy 0 C
-If *#*C==#23 #20 #21
-Copy #22 *#E
-Copy #23 *#*C
+Move                    // start moving!
+Block #E
+If D #12 #0             // 8 turns of attack or move
+If D #12 #0
+If D #12 #0
+If D #12 #0
+If D #12 #0
+If D #12 #0
+If D #12 #0
+If D #12 #0
+Copy D+1 D              // change direction
+Copy 0 C                // start over
+If *#*C==#23 #20 #21    // if opponent is frozen, give them a flag, otherwise freeze them
+Copy #C+13 *#E          // give a flag to opponent
+Copy #23 *#*C           // copy freeze line to opponent
+Flag                    // 8 flags, one per If above
 Flag
-Copy C+23 C
+Flag
+Flag
+Flag
+Flag
+Flag
+Flag                    
+Copy C+23 C             // this line freezes any bot that executes it
