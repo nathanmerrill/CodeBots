@@ -1,0 +1,24 @@
+Move
+If D #2 #6
+Copy #8 *#*C
+Copy #7 *#*C+21
+Block *#*C+20
+Copy E D
+Copy 23 C
+Flag
+Copy #C+23 #C+1
+Flag
+Flag
+Flag
+Move
+If D #14 #18
+Copy #20 *#*C
+Copy #19 *#*C+21
+Block *#*C+20
+Copy E D
+Copy 11 C
+Flag
+Copy #C+23 #C+1
+Flag
+Flag
+Flag

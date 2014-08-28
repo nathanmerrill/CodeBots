@@ -147,7 +147,10 @@ class Bot(object):
             return (val+offset) % num_lines
         if argument.type == Line:
             return person.actions[(val+offset) % num_lines]
-        return (person.vars[argument.var_name] + offset) % num_lines
+        if argument.var_name == "C":
+            return (person.vars[argument.var_name] + offset) % num_lines
+        else:
+            return (person.vars[argument.var_name]) % num_lines
 
     def set_arg(self, argument, value):
         value = self.get_arg(value)

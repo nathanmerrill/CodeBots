@@ -1,0 +1,7 @@
+Move
+Move
+If D #5 #1
+Copy E D
+Copy 1 C
+Copy #E *#*C
+Flag

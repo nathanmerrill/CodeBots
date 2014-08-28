@@ -1,0 +1,24 @@
+Flag
+Copy 8 D
+Copy 16 B
+If #D==#B #C+2 #C+3
+Block #A
+Copy #D #A
+If D #7 #15
+Copy #23 *#*C
+Copy A+1 A
+Copy B+1 B
+Copy D+1 D
+If #D==#B #C+2 #C+3
+Block #A
+Copy #D #A
+If D #7 #15
+Move
+Copy A+1 A
+Copy B+1 B
+Copy D+1 D
+If #D==#B #C+2 #C+3
+Block #A
+Copy #D #A
+If D #7 #15
+Flag

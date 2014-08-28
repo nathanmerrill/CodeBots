@@ -1,9 +1,3 @@
 Copy A+1 A
 Block #A
-If A #C+1 #C+2
-Copy C+21 C
-Copy C+2 C
-Block B
-Block D
-Copy 3 C
-Copy 23 C
+Copy C+22 C

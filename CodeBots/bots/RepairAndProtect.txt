@@ -1,0 +1,24 @@
+If #A==#A+16 #C+1 #C
+Copy #A #A+8
+Block #A+8
+Copy A+1 A
+Copy E D
+Move
+Copy #C+1 *#*C
+Flag
+If #A==#A+16 #C+1 #C
+Copy #A #A+8
+Block #A+8
+Copy A+1 A
+Copy E D
+Move
+Copy #C+1 *#*C
+Flag
+If #A==#A+16 #C+1 #C
+Copy #A #A+8
+Block #A+8
+Copy A+1 A
+Copy E D
+Move
+Copy #C+1 *#*C
+Flag
