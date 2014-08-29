@@ -114,7 +114,7 @@ class Argument(object):
             return_person = opponent
         return return_person, return_val
 
-_
+
 class Bot(object):
     def __init__(self, name, coordinates, code):
         self.name = name
