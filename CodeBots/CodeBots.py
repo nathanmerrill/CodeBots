@@ -99,7 +99,7 @@ class Argument(object):
             return_person = self.step_opponents(person, self.parts_to_add[0][1])
             if not return_person:
                 return None, None
-            return_val = self.parts_to_add[0][0]
+            return_val = self.parts_to_add[0][0] % num_lines
         else:
             sum = 0
             for part, opponents in self.parts_to_add:
@@ -107,7 +107,7 @@ class Argument(object):
                 if not return_person:
                     return None, None
                 sum += return_person.parse_number(part)
-            return_val = sum
+            return_val = sum % num_lines
         if self.type is Line:
             opponent = self.step_opponents(person, self.num_line_opponents)
             return_val = return_person.parse_number(return_val)
