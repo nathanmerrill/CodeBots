@@ -9,7 +9,6 @@ num_turns = 5000
 num_games = 10
 width = 0
 height = 0
-total_offset = random.randrange(0, num_lines)
 bots = {}
 
 directions = North, East, South, West = ((0, -1), (1, 0), (0, 1), (-1, 0))
@@ -121,7 +120,6 @@ class Bot(object):
         self.coordinates = coordinates
         self.blocked = {}
         self.actions = self.read_code(code)
-        self.offset = int(hash(name))+total_offset
 
     def read_code(self, code):
         actions = []
@@ -147,15 +145,11 @@ class Bot(object):
         person, val = argument.get_value(self)
         if not person:
             return None
-        offset = person.offset if person is not self else 0
         if argument.type == Int:
-            return (val+offset) % num_lines
+            return val % num_lines
         if argument.type == Line:
-            return person.actions[(val+offset) % num_lines]
-        if argument.var_name == "C":
-            return (person.vars[argument.var_name] + offset) % num_lines
-        else:
-            return (person.vars[argument.var_name]) % num_lines
+            return person.actions[val % num_lines]
+        return person.vars[argument.var_name] % num_lines
 
     def set_arg(self, argument, value):
         value = self.get_arg(value)
