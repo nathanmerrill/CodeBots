@@ -99,7 +99,10 @@ class Argument(object):
             return_person = self.step_opponents(person, self.parts_to_add[0][1])
             if not return_person:
                 return None, None
-            return_val = self.parts_to_add[0][0] % num_lines
+            if type(self.parts_to_add[0][0]) == int:
+                return_val = self.parts_to_add[0][0] % num_lines
+            else:
+                return_val = self.parts_to_add[0][0]
         else:
             sum = 0
             for part, opponents in self.parts_to_add:
@@ -114,7 +117,6 @@ class Argument(object):
             return_person = opponent
         return return_person, return_val
 
-_
 class Bot(object):
     def __init__(self, name, coordinates, code):
         self.name = name
