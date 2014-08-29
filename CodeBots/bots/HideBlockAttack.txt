@@ -1,0 +1,24 @@
+Copy D+1 D
+Move           //buy some time by moving to a more secure location
+Block #A+2
+Copy A+1 A
+If A #11 #17
+Copy #23 *#E
+Copy #22 *#E
+Copy #21 *#E
+Copy #20 *#E
+Copy #19 *#E
+Copy D+1 D
+Copy 1 C
+Move
+If D #14 #15
+Copy 3 C
+Copy 11 C
+Copy #18 *#*C
+If D #16 #15
+Copy C+23 C
+Flag
+Flag
+Flag
+Flag
+Flag

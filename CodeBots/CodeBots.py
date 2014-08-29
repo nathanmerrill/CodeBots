@@ -6,10 +6,10 @@ import random
 num_lines = 24
 num_copies = 50
 num_turns = 5000
-num_games = 50
+num_games = 10
 width = 0
 height = 0
-total_offset = random.randrange(0, 16)
+total_offset = random.randrange(0, num_lines)
 bots = {}
 
 directions = North, East, South, West = ((0, -1), (1, 0), (0, 1), (-1, 0))
@@ -78,6 +78,8 @@ class Argument(object):
         if not len(self.parts_to_add):
             raise BadFormatException
 
+    def __str__(self):
+        return self.string
 
     def __hash__(self):
         return hash(self.string)
@@ -115,7 +117,7 @@ class Bot(object):
     def __init__(self, name, coordinates, code):
         self.name = name
         self.vars = {"A": 0, "B": 0, "C": 0,
-                     "D": random.randrange(16), "E": random.randrange(16)}
+                     "D": random.randrange(num_lines), "E": random.randrange(num_lines)}
         self.coordinates = coordinates
         self.blocked = {}
         self.actions = self.read_code(code)
@@ -164,7 +166,7 @@ class Bot(object):
             return
         person.check_blocked(argument.var_name)
         if argument.type == Line:
-            person.actions[val % 16] = value
+            person.actions[val % num_lines] = value
         if argument.type == Var:
             person.vars[val] = value
 
@@ -227,7 +229,7 @@ class Bot(object):
         if (copy_to.type == Line or copy_from.type == Line) \
                 and copy_from.type != copy_to.type:
             raise BadFormatException
-        return Action(name="Copy", args=(copy_to, copy_from),
+        return Action(name="Copy", args=(copy_from, copy_to),
                       func=lambda b: b.set_arg(copy_to, copy_from))
 
     @classmethod
@@ -297,7 +299,9 @@ class Bot(object):
         if condition.type == Line:
             def test_line(b):
                 person, arg = condition.get_value(b)
-                return person[arg].name == "Flag"
+                if person is None:
+                    return False
+                return person.actions[arg].name == "Flag"
             return test_line
         if condition.type == Var:
             if condition.var_name == "E":
@@ -375,10 +379,11 @@ if __name__ == "__main__":
     points = {}
     for game in xrange(num_games):
         bots.clear()
-        print "Game:"+str(game)
         read_bots()
+        hold_bot = bots.values()[0]
         for turn in xrange(num_turns):
-            bot = bots.values()[0]
+            if not turn%100:
+                print "Game:"+str(game)+ " Turn:"+str(turn)
             for bot in bots.values():
                 bot.act()
         for bot in bots.values():
@@ -387,10 +392,14 @@ if __name__ == "__main__":
                 points[flag] += 1
             else:
                 points[flag] = 1
+        print hold_bot.name
+        for action in hold_bot.actions:
+            print action.name+" "+" ".join([str(arg) for arg in action.args])
     finish_time = time.time()
     running_time = (finish_time-start_time)
 
     total_scores = sorted([x[::-1] for x in points.items()])[::-1]
+
     for score, name in total_scores:
         if name == 0:
             print "> There were "+str(score)+" bots with equal flags\n"

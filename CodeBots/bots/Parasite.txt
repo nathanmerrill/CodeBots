@@ -1,0 +1,24 @@
+Copy 1 A
+Copy E D
+Block #A
+If *#A #C+3 #C
+Copy A+A+A+A+A A
+Copy C+19 C
+Copy #C+4 *#A
+Flag
+Copy 1 A
+Copy E D
+Block #A
+If *#A #C+3 #C
+Copy A+A+A+A+A A
+Copy C+19 C
+Copy #C+4 *#A
+Flag
+Copy 1 A
+Copy E D
+Block #A
+If *#A #C+3 #C
+Copy A+A+A+A+A A
+Copy C+19 C
+Copy #C+4 *#A
+Flag

@@ -1,0 +1,24 @@
+If D #23 #22
+Copy C+22 C
+Copy #18 *#*C+1
+Copy #18 *#*C
+Copy #18 *#1
+Copy #18 *#1
+Copy 1 *C
+Copy 1 *C
+Copy 2 A
+Copy #A *#*A
+If D #11 #13
+Copy A+1 A
+Copy 10 C
+Copy 1 C
+Flag
+Flag
+Flag
+Flag
+Copy C+23 C
+Copy D+1 D
+Copy 1 C
+If *#*C==#*C #19 #20
+Move
+If *#*C+1==#*C+1 #21 #20
