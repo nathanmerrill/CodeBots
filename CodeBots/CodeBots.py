@@ -40,6 +40,9 @@ class Action(object):
         recursives.add(self.hash)
         return self.func(*args, **kwargs)
 
+    def __str__(self):
+        return self.name+" "+" ".join(self.args)
+
 ArgumentTypes = Int, Var, Line = range(3)
 
 class Argument(object):
@@ -111,7 +114,7 @@ class Argument(object):
             return_person = opponent
         return return_person, return_val
 
-
+_
 class Bot(object):
     def __init__(self, name, coordinates, code):
         self.name = name
@@ -120,6 +123,9 @@ class Bot(object):
         self.coordinates = coordinates
         self.blocked = {}
         self.actions = self.read_code(code)
+
+    def __str__(self):
+        return "\n".join(self.actions)
 
     def read_code(self, code):
         actions = []
