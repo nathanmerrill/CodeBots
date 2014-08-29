@@ -1,0 +1,8 @@
+If D #C+2 #C+3          // A: If [enemy exists] B else C
+Copy C+22 C             // GOTO A
+If *#*C==#7 #C+4 #C+5   // B: If [enemy was neutralized] D else E
+Move                    // C: Move
+Copy E D                // D: Turn Randomly
+Copy #7 *#*C            // E: Neutralize enemy
+Copy C+1 C              // Skip the next line
+Copy #C #C+1            // Neutralizing Code [Copy this line to next line]

@@ -1,10 +1,10 @@
 Move
-If D #C+8 #0
-If D #C+8 #0
-If D #C+8 #0
-If D #C+8 #0
-If D #C+8 #0
+If D #8 #0
+If D #8 #0
+If D #8 #0
+If D #8 #0
+If D #8 #0
 Copy D+1 D
-Copy 0 C
+Copy 23 C
 Copy #E *#E
 Flag

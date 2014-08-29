@@ -1,0 +1,24 @@
+If D #2 #1
+Copy 23 C
+Copy #8 *#*C // freeze the opponent
+Copy 9 A
+Copy #A *#A+*C // copy the next line at the appropriate  line
+Copy A+1 A
+If A==24 #7 #24
+Copy 23 C
+Copy C+23 C
+If D #C+2 #C+23 // the code for the Insidious clone starts here
+Copy C+21 C
+Copy C+2 C
+If D #C+6 #C+22
+If D #C+5 #C+22
+If D #C+4 #C+20
+If D #C+3 #C+19
+If D #C+2 #C+18
+Copy E D
+Copy #C+7 *#*C
+Flag
+Copy C+3 A
+Copy #C+22 #A
+Copy A+1 A
+Copy C+21 C // And ends here

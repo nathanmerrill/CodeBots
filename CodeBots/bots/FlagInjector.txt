@@ -1,0 +1,24 @@
+Copy E D     //A: Turn Randomly
+Move         //B: Move
+If D #10 #3  //C: If [enemy exists] E else D
+Copy 0 C     //D: Goto B
+Flag
+Copy #4 *#*C+1 //ATK1: Copy my flag
+Flag
+Copy #6 *#*C+1 //ATK2: Copy my flag
+Flag
+Copy #8 *#*C+1 //ATK3: Copy my flag
+Copy 11 C    //E: Goto ATTACK
+Copy 23 C    //F: Goto A
+If *#*C==#4 #11 #5 //ATTACK: If [enemy executing my flag] E else ATK1
+If *#*C==#4 #11 #7 //If [enemy executing my flag] E else ATK2
+If *#*C==#4 #11 #9 //If [enemy executing my flag] E else ATK3
+If *#*C==#4 #11 #5
+If *#*C==#4 #11 #7
+If *#*C==#4 #11 #9
+If *#*C==#4 #11 #5
+If *#*C==#4 #11 #7
+If *#*C==#4 #11 #9
+If *#*C==#4 #11 #5
+If *#*C==#4 #11 #7
+If *#*C==#4 #11 #9

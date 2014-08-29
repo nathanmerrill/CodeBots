@@ -1,0 +1,24 @@
+If D #4 #12
+If D #4 #12
+If D #4 #12
+Copy 23 C
+If *#*C==#23 #5 #6
+Copy 6 C
+Copy #23 *#*C
+Copy 0 A
+If *#A=#22 #14 #15
+Copy A+1 A
+If D #16 #11
+Copy 7 C
+Copy #22 *#A
+Block #E
+If A #15 #11
+Copy 15 C
+Copy #22 *#*C
+Copy D+1 D
+Copy 23 C
+Flag
+Flag
+Flag
+Flag
+Copy C+23 C

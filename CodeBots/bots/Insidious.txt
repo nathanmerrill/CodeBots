@@ -1,0 +1,18 @@
+Move
+If D #4 #0
+If D #4 #0
+Copy 0 C
+Copy 4 C
+If D #12 #11
+If D #12 #11
+If D #12 #11
+If D #12 #11
+If D #12 #11
+Copy D+1 D
+If D #4 #3
+Copy #C+8 *#*C
+Flag
+Copy C+4 A
+Copy #C+22 #A
+Copy A+1 A
+Copy C+21 C

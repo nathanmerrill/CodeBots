@@ -1,0 +1,12 @@
+Move
+If D #7 #0
+If D #7 #0
+If D #7 #0
+If D #7 #0
+If D #7 #0
+Copy 0 C
+If D=*D #9 #8     //If they point in a different direction
+Copy *D D           //fix that
+If #A==*#A #10 #11  //Did we copy line A already?
+Copy A+1 A          //If so, A++
+Copy #A *#A         //else, copy it!
