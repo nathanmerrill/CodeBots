@@ -1,0 +1,24 @@
+Block #22
+If D #8 #5
+If D #8 #5
+If D #8 #5
+Copy 23 C
+If E #6 #7
+Copy D+1 D
+Move
+If *#E=#22 #15 #9
+If *#E+1=#22 #16 #10
+If *#E+2=#22 #17 #11
+If *#E+3=#22 #18 #12
+If *#E+4=#22 #19 #13
+If *#E+5=#22 #20 #14
+If *#E+6=#22 #21 #23
+Copy #22 *#E
+Copy #22 *#E+1
+Copy #22 *#E+2
+Copy #22 *#E+3
+Copy #22 *#E+4
+Copy #22 *#E+5
+Copy #22 *#E+6
+Flag
+Block #E

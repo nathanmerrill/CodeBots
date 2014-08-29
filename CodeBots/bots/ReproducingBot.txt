@@ -1,24 +1,24 @@
 If D #23 #22
-Copy C+22 C
+Copy 23 C
+Copy #18 *#*C
 Copy #18 *#*C+1
 Copy #18 *#*C
-Copy #18 *#1
-Copy #18 *#1
-Copy 1 *C
-Copy 1 *C
-Copy 2 A
+Copy #18 *#0
+Copy #18 *#0
+Copy 0 *C
+Copy 0 *C
+Copy 1 A
 Copy #A *#*A
-If D #11 #13
+If D #12 #14
 Copy A+1 A
-Copy 10 C
-Copy 1 C
-Flag
+Copy 9 C
+Copy 23 C
 Flag
 Flag
 Flag
 Copy C+23 C
 Copy D+1 D
-Copy 1 C
-If *#*C==#*C #19 #20
+Flag
+If *#*C==#*C #19 #13
 Move
-If *#*C+1==#*C+1 #21 #20
+If *#*C+1==#*C+1 #21 #13

@@ -289,7 +289,7 @@ class Bot(object):
             def equals(b):
                 v1 = b.get_arg(val1)
                 v2 = b.get_arg(val2)
-                if val1 is None or val2 is None:
+                if v1 is None or v2 is None:
                     return False
                 if val1.type == Line:
                     return b.get_arg(val1).equals(b.get_arg(val2))
@@ -348,7 +348,6 @@ class Bot(object):
                 max_flag_count = amount
             elif amount == max_flag_count:
                 max_flag = 0
-                max_flag_count = 0
         return max_flag
 
 def read_bots():
@@ -356,15 +355,17 @@ def read_bots():
     random.shuffle(b)
     global width
     global height
-    width = int(len(b)**.5)
-    height = int(len(b)/width)+1
+    width = int((len(b)*4)**.5)
+    height = int(len(b)*4/width)+1
     for x in xrange(width):
         for y in xrange(height):
-            coordinates = (x*4+y%2+2, y)
-            code, name = b.pop()
-            bots[coordinates] = Bot(name, coordinates, code)
-            if not b:
-                return
+            if (x%4 == 0 and y%2 == 0) or (x%4 == 2 and y%2 == 1):
+                coordinates = (x,y)
+                code, name = b.pop()
+                bots[coordinates] = Bot(name, coordinates, code)
+                if not b:
+                    return
+
 
 def read_file(filename):
     f = file(filename)
@@ -380,9 +381,8 @@ if __name__ == "__main__":
     for game in xrange(num_games):
         bots.clear()
         read_bots()
-        hold_bot = bots.values()[0]
         for turn in xrange(num_turns):
-            if not turn%100:
+            if not turn % 100:
                 print "Game:"+str(game)+ " Turn:"+str(turn)
             for bot in bots.values():
                 bot.act()
@@ -392,9 +392,6 @@ if __name__ == "__main__":
                 points[flag] += 1
             else:
                 points[flag] = 1
-        print hold_bot.name
-        for action in hold_bot.actions:
-            print action.name+" "+" ".join([str(arg) for arg in action.args])
     finish_time = time.time()
     running_time = (finish_time-start_time)
 

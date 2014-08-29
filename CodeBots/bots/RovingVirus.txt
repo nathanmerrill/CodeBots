@@ -1,0 +1,24 @@
+If D #6 #16
+Move
+Copy 23 C
+Flag
+Flag
+Flag
+Copy 6 C
+Copy A+23 A
+Copy #A *#A                     //clone previous line to enemy
+Copy 23 *C                      //freeze enemy
+If A #6 #16                     //loop or turn then continue
+Copy 0 *C                       //reboot enemy
+Copy 23 C                       //start moving again
+Flag
+Flag
+Flag
+Copy D+1 D                      //turn
+Flag
+Flag
+Flag
+Flag
+Flag
+Flag
+Copy 22 C                       //freeze instruction
